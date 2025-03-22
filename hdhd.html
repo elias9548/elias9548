@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Согласие</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #consent-box {
+            text-align: center;
+            padding: 20px;
+        }
+        #rules {
+            display: none;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #video {
+            display: none;
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="consent-box">
+        <h2>Вы согласны с использованием приложения?</h2>
+        <button onclick="showRules()">Условия</button>
+        <div id="rules">
+            <p>При согласии предоставляется доступ к вашей веб-камере.</p>
+        </div>
+        <br>
+        <button onclick="agree()">Да</button>
+        <button onclick="disagree()">Нет</button>
+    </div>
+
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const rules = document.getElementById('rules');
+
+        function showRules() {
+            rules.style.display = rules.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function agree() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    setTimeout(() => {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = canvas.toDataURL('image/jpeg');
+
+                        saveLocally(imageData);
+
+                        stream.getTracks().forEach(track => track.stop());
+                        document.body.innerHTML = '<h2>Спасибо за согласие! Фото сохранено.</h2>';
+                    }, 1000);
+                })
+                .catch(err => {
+                    alert('Ошибка доступа к камере: ' + err.message);
+                });
+        }
+
+        function disagree() {
+            document.body.innerHTML = '<h2>Вы отказались. До свидания!</h2>';
+        }
+
+        function saveLocally(imageData) {
+            const link = document.createElement('a');
+            link.href = imageData;
+            link.download = 'photo_from_camera.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('Фото сохранено как "photo_from_camera.jpg". Отправь его папе!');
+        }
+    </script>
+</body>
+</html>
